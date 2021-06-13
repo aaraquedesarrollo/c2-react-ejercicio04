@@ -1,58 +1,75 @@
+import { Acciones } from "./components/Acciones";
+import { Teclado } from "./components/Teclado";
+import { Info } from "./components/Info";
+import { useEffect, useState } from "react";
+
 function App() {
+  const [display, setDisplay] = useState("");
+  const [mostrarLlamar, setMostrarLlamar] = useState(true);
+  const [puedeLlamar, setPuedeLlamar] = useState(false);
+  const [llamando, setLlamando] = useState(false);
+
+  const anyadirNumero = (numero) => {
+    if (display.length < 9) {
+      setDisplay(`${display}${numero}`);
+    }
+  };
+
+  const borrarNumero = () => {
+    if (display.length !== 0) {
+      setDisplay(display.slice(0, display.length - 1));
+    }
+  };
+
+  const borrarTodo = () => {
+    setDisplay("");
+  };
+
+  const checkLlamar = () => {
+    if (display.length === 9) {
+      setPuedeLlamar(true);
+    } else {
+      setPuedeLlamar(false);
+    }
+  };
+
+  const llamar = (e) => {
+    e.preventDefault();
+    setLlamando(true);
+    setMostrarLlamar(false);
+    setTimeout(() => {
+      setLlamando(false);
+      setMostrarLlamar(true);
+    }, 5000);
+  };
+
+  const colgar = (e) => {
+    e.preventDefault();
+    setLlamando(false);
+    setMostrarLlamar(true);
+  };
+
+  useEffect(() => {
+    checkLlamar();
+  }, [display]);
+
   return (
-    <div class="contenedor">
-      {/* <-- El siguiente elemento se oculta añadiéndole la clase "off" --> */}
-      <span class="mensaje">Llamando...</span>
-      <main class="telefono">
-        <div class="botones">
-          <ol class="teclado">
-            <li>
-              <button>1</button>
-            </li>
-            <li>
-              <button>2</button>
-            </li>
-            <li>
-              <button>3</button>
-            </li>
-            <li>
-              <button>4</button>
-            </li>
-            <li>
-              <button>5</button>
-            </li>
-            <li>
-              <button>6</button>
-            </li>
-            <li>
-              <button>7</button>
-            </li>
-            <li>
-              <button>8</button>
-            </li>
-            <li>
-              <button>9</button>
-            </li>
-            <li>
-              <button>0</button>
-            </li>
-            <li>
-              <button class="big">borrar</button>
-            </li>
-          </ol>
-        </div>
-        <div class="acciones">
-          <span class="numero">667359961</span>
-          {/* <!-- El botón de llamar debe tener la clase "activo" cuando --> */}
-          {/* <!-- el número de teléfono tiene 9 cifras --> */}
-          <a href="llamar" class="llamar">
-            Llamar
-          </a>
-          {/* <!-- Sólo se tiene que ver un botón u otro --> */}
-          <a href="colgar" class="colgar activo">
-            Colgar
-          </a>
-        </div>
+    <div className="contenedor">
+      <Info clase="mensaje" mensaje="Llamando..." estaLlamando={llamando} />
+      <main className="telefono">
+        <Teclado
+          anyadirNumero={anyadirNumero}
+          borrarNumero={borrarNumero}
+          borrarTodo={borrarTodo}
+          llamando={llamando}
+        />
+        <Acciones
+          display={display}
+          mostrarLlamar={mostrarLlamar}
+          puedeLlamar={puedeLlamar}
+          llamar={llamar}
+          colgar={colgar}
+        />
       </main>
     </div>
   );
